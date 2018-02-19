@@ -1,8 +1,8 @@
 samplepkg
 =========
 
-Skeleton python package. Test setup.py. We have at least 5 ways to install a
-package using pip + setuptools + setup.py, oh boy! 
+Skeleton python package to test setup.py and various ways to install a package
+using pip + setuptools + setup.py.
 
 Run ``installtest.sh`` to get results like the one below. Adapt ``$version`` in
 the script to your system first. The script will install and uninstall the
@@ -51,6 +51,13 @@ You can also use ``installtest.sh`` on other projects::
     #user site-packages                   :
     #user site-packages/easy-install.pth  :
     #local site-packages                  : samplepkg samplepkg-1.2.3.egg-info
+    #local site-packages/easy-install.pth :
+
+    #cmd: PYTHONUSERBASE=/home/elcorto/soft pip3 install .
+    #pip list                             :
+    #user site-packages                   : samplepkg samplepkg-1.2.3-py3.6.egg-info
+    #user site-packages/easy-install.pth  :
+    #local site-packages                  :
     #local site-packages/easy-install.pth :
 
     #cmd: PYTHONPATH=/home/elcorto/soft/lib/python3.6/site-packages python3 setup.py install --prefix=/home/elcorto/soft

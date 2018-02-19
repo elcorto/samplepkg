@@ -40,7 +40,9 @@ rm -f $log
 run "pip3 install -e ."
 run "PYTHONUSERBASE=$user_prefix pip3 install -e ."
 run "PYTHONPATH=$user_site_pkg python3 setup.py develop --prefix=$user_prefix"
+
 run "pip3 install ."
+run "PYTHONUSERBASE=$user_prefix pip3 install ."
 run "PYTHONPATH=$user_site_pkg python3 setup.py install --prefix=$user_prefix"
 
 uninstall
