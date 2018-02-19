@@ -8,6 +8,8 @@ Run ``installtest.sh`` to get results like the one below. Adapt ``$version`` in
 the script to your system first. The script will install and uninstall the
 package using various methods and show where files are copied to.
 
+The script writes a log file ``installtest.log`` with detailed command output.
+
 We assume that we have a naming scheme for the package "samplepkg" such that::
 
     /path/to/samplepkg

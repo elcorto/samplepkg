@@ -6,3 +6,4 @@ dist
 *.pyc
 *.so
 *.egg-info
+*.log

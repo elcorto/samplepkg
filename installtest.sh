@@ -8,25 +8,26 @@ local_site_pkg=$HOME/.local/lib/$version/site-packages
 user_easy_install_pth=$user_site_pkg/easy-install.pth
 local_easy_install_pth=$local_site_pkg/easy-install.pth
 
+log=installtest.log
+
 err(){
     echo "error: $@"
     exit 1
 }
 
 uninstall(){
-    pip3 uninstall -y $name > /dev/null 2>&1
+    pip3 uninstall -y $name >> $log 2>&1
     sed -i "/$name/d" $user_easy_install_pth $local_easy_install_pth
-    rm -rf $user_site_pkg/$name* $local_site_pkg/$name*
+    rm -rfv $user_site_pkg/$name* $local_site_pkg/$name*  >> $log 2>&1
 }
 
 run(){
     cmd=$@
     uninstall
-    echo "\n#cmd: $cmd"
+    echo "\n#cmd: $cmd" | tee -a $log
     unset PYTHONUSERBASE PYTHONPATH
     [ -z "$(env | grep PYTHON)" ] || err "unset env failed"
-    log=installtest_$(echo "$cmd" | sed -re 's|[/ ]|_|g')
-    eval "$cmd > $log 2>&1"
+    eval "$cmd >> $log 2>&1"
     lst=$(pip3 list --format=columns | grep $name | tr -s ' ')
     echo "#pip list                             : $lst" 
     echo "#user site-packages                   : $(ls -1 $user_site_pkg/ | grep $name | paste -s -d' ')" 
@@ -35,6 +36,7 @@ run(){
     echo "#local site-packages/easy-install.pth : $(grep $name $local_easy_install_pth)"
 }
 
+rm -f $log
 run "pip3 install -e ."
 run "PYTHONUSERBASE=$user_prefix pip3 install -e ."
 run "PYTHONPATH=$user_site_pkg python3 setup.py develop --prefix=$user_prefix"
