@@ -1,6 +1,6 @@
 #!/bin/sh
 
-name=$(basename $(pwd))
+pkgname=$(basename $(pwd))
 version=python3.6
 user_prefix=$HOME/soft
 user_site_pkg=$HOME/soft/lib/$version/site-packages
@@ -16,9 +16,9 @@ err(){
 }
 
 uninstall(){
-    pip3 uninstall -y $name >> $log 2>&1
-    sed -i "/$name/d" $user_easy_install_pth $local_easy_install_pth
-    rm -rfv $user_site_pkg/$name* $local_site_pkg/$name*  >> $log 2>&1
+    pip3 uninstall -y $pkgname >> $log 2>&1
+    sed -i "/$pkgname/d" $user_easy_install_pth $local_easy_install_pth
+    rm -rfv $user_site_pkg/$pkgname* $local_site_pkg/$pkgname*  >> $log 2>&1
 }
 
 run(){
@@ -28,15 +28,24 @@ run(){
     unset PYTHONUSERBASE PYTHONPATH
     [ -z "$(env | grep PYTHON)" ] || err "unset env failed"
     eval "$cmd >> $log 2>&1"
-    lst=$(pip3 list --format=columns | grep $name | tr -s ' ')
+    lst=$(pip3 list --format=columns | grep $pkgname | tr -s ' ')
     echo "#pip list                             : $lst" 
-    echo "#user site-packages                   : $(ls -1 $user_site_pkg/ | grep $name | paste -s -d' ')" 
-    echo "#user site-packages/easy-install.pth  : $(grep $name $user_easy_install_pth)" 
-    echo "#local site-packages                  : $(ls -1 $local_site_pkg/ | grep $name | paste -s -d' ')" 
-    echo "#local site-packages/easy-install.pth : $(grep $name $local_easy_install_pth)"
+    echo "#user site-packages                   : $(ls -1 $user_site_pkg/ | grep $pkgname | paste -s -d' ')" 
+    echo "#user site-packages/easy-install.pth  : $(grep $pkgname $user_easy_install_pth)" 
+    echo "#local site-packages                  : $(ls -1 $local_site_pkg/ | grep $pkgname | paste -s -d' ')" 
+    echo "#local site-packages/easy-install.pth : $(grep $pkgname $local_easy_install_pth)"
 }
 
 rm -f $log
+
+cat << eof | tee -a $log
+#locations:
+#    HOME                : $HOME
+#    user site-packages  : $user_site_pkg
+#    local site-packages : $local_site_pkg
+
+eof
+
 run "pip3 install -e ."
 run "PYTHONUSERBASE=$user_prefix pip3 install -e ."
 run "PYTHONPATH=$user_site_pkg python3 setup.py develop --prefix=$user_prefix"
