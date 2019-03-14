@@ -1,1 +1,5 @@
-numpy
+# Use when you have network connection. Install small dummy dependency from
+# pypi. dev install (pip3 install -e) doesn't apply here, dependencies are
+# always installed by copying.
+
+##dummy_test
