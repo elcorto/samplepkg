@@ -3,7 +3,7 @@
 set -eu
 
 here=$(pwd)
-pkgname=$(basename $here)
+pkgname=$(basename $(ls $here/src))
 
 version=python3.7
 venv=__test_venv__

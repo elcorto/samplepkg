@@ -21,7 +21,8 @@ setup(
     author_email='git@focker.com',
     license='BSD 3-Clause',
     keywords='k3y w0rd',
-    packages=find_packages(),
+    package_dir={'': 'src'},
+    packages=find_packages(where='src'),
     install_requires=open('requirements.txt').read().splitlines(),
     python_requires='>=3',
 )
