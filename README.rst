@@ -47,7 +47,7 @@ The recommended way to set up a venv is thus
     (awesome_venv)$ pip install dependency1 dependency2 ...
     (awesome_venv)$ pip install [-e] .
 
-    # you like living on the funky edge
+    # pipenv
     $ pipenv install
     # then either
     $ pipenv shell
@@ -187,3 +187,47 @@ Results from a run of ``installtest.sh``, started from
                                       ./.venv/lib/python3.7/site-packages/ : dummy_test/ dummy_test-0.1.3.dist-info/ samplepkg.egg-link
                     ./.venv/lib/python3.7/site-packages/samplepkg.egg-link : /home/elcorto/soft/git/samplepkg/src/
                       ./.venv/lib/python3.7/site-packages/easy-install.pth : /home/elcorto/soft/git/samplepkg/src/
+
+Upload a package to pypi
+========================
+
+See
+
+* https://packaging.python.org/tutorials/packaging-projects/
+* https://packaging.python.org/guides/using-testpypi/
+
+
+Install pypa's upload tool. On Debian-ish systems:
+
+.. code-block:: sh
+
+    $ sudo apt install twine
+
+Build
+
+.. code-block:: sh
+
+    $ rm -rf build dist *.egg-info
+    $ python3 setup.py sdist bdist_wheel
+
+Test
+
+.. code-block:: sh
+
+    $ twine upload --repository testpypi dist/*
+
+    $ mkvirtualenv foo
+
+    # this fails
+    (foo) $ pip search --index https://test.pypi.org/simple mypackage
+
+    # this works
+    (foo) $ pip install --index-url https://test.pypi.org/simple [--no-deps] mypackage
+    (foo) $ deactivate
+    $ rmvirtualenv foo
+
+Real upload
+
+.. code-block:: sh
+
+    $ twine upload dist/*
