@@ -1,8 +1,3 @@
-# publish on pypi
-# ---------------
-#   $ python3 setup.py sdist
-#   $ twine upload dist/<this-package>-x.y.z.tar.gz
-
 import os
 from setuptools import setup, find_packages
 
