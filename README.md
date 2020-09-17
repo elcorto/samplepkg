@@ -1,102 +1,112 @@
-samplepkg
-=========
+About
+=====
 
-Skeleton Python package to test ``setup.py`` and the various colorful ways of
-installing a Python package and its dependencies using ``pip`` +
-``setuptools`` + ``setup.py`` + ``*venv*`` + ... other tools ...
+This is a skeleton Python package to test `setup.py` and various ways
+of installing a Python package from a source tree and its dependencies (see
+`requirements.txt`) using `pip` + `setuptools` + `setup.py` + `venv`/`pipenv`.
+We don't (yet) cover `pyproject.toml` or package managers other than
+`pip`, such as `conda`.
 
-Run ``installtest.sh`` to get results like the one below.
+This repo is not a replacement for the [pypa sampleproject][sampleproject].
+Rather, we use `installtest.sh` to install/uninstall the package in various
+ways and analyze where files have been placed in order to understand how
+different install methods affect the system. This is useful for situations
+where using `docker` or cheaper install env separation tech such as venvs is
+not used and one still needs to separate manually installed packages from those
+installed by a system package manager such as `apt` on Debian. Also, this
+knowledge helps to debug situations such as "Hey, I installed the `foo` package
+using `$some_method` but my Python says `No module named 'foo'`. What's
+up?".
 
 Key observations
 ================
 
-* system ``pip`` installs into local site-packages
-  (``~/.local/lib/pythonX.Y/site-packages``, at least on Debian)
-* change ``pip`` install dir using ``PYTHONUSERBASE``
-* ``pip`` copies the package (no ``.egg`` files)
-* ``setup.py install`` creates ``.egg`` files
-* ``pip install -e`` is the same as  ``setup.py develop``, creates
-  a file ``<package>.egg-link`` which points to the source tree
-* ``venv --without-pip`` uses system ``pip`` and does *not* install into venv
-* dev install (``pip install -e``) doesn't apply to dependencies (see
-  ``requirements.txt``)
-* ``pipenv`` is a package manager for your dependencies, not an installer for
-  your project, use ``pipenv install && pipenv run pip install .``
+* system `pip` installs into local site-packages
+  (`~/.local/lib/pythonX.Y/site-packages`, at least on Debian)
+* change `pip` install dir using `PYTHONUSERBASE`
+* `pip` copies the package (no `.egg` files)
+* `setup.py install` creates `.egg` files
+* `pip install -e` is the same as `setup.py develop`, creates a file
+  `<package>.egg-link` which points to the source tree
+* `venv --without-pip` uses system `pip` and does *not* install into
+  venv
+* dev install (`pip install -e`) doesn\'t apply to dependencies (see
+  `requirements.txt`)
+* `pipenv` is a package manager for your dependencies, not an
+  installer for your project, use
+  `pipenv install && pipenv run pip install .`
 
-
-1000 ways to create a venv
+Many ways to create a venv
 --------------------------
-*Never* use ``venv --without-pip`` since this will use system ``pip`` and
-make the venv ineffective! However, ``venv --system-site-packages`` is OK for
-access to system site package (duh..), but no packages will be installed there.
+
+*Never* use `venv --without-pip` since this will use system `pip` and make the
+venv ineffective! However, `venv --system-site-packages` is OK for access to
+system site package, but no packages will be installed there.
 
 The recommended way to set up a venv is thus
 
-.. code-block:: sh
+```sh
+$ cd /path/to/project
 
-    $ cd /path/to/project
+# pure python
+$ python3 -m venv --symlinks [--system-site-packages] awesome_venv
+$ . ./awesome_venv/bin/activate
+(awesome_venv)$ pip install -r requirements.txt  # or pip install dep1 dep2 ...
+(awesome_venv)$ pip install [-e] .
 
-    # pure python
-    $ python3 -m venv --symlinks [--system-site-packages] awesome_venv
-    $ . ./awesome_venv/bin/activate
-    (awesome_venv)$ pip install dependency1 dependency2 ...
-    (awesome_venv)$ pip install [-e] .
+# virtualenvwrapper (--symlinks is default)
+$ mkvirtualenv [--system-site-packages] -p /usr/bin/python3 awesome_venv
+(awesome_venv)$ pip install -r requirements.txt
+(awesome_venv)$ pip install [-e] .
 
-    # virtualenvwrapper (--symlinks is default)
-    $ mkvirtualenv [--system-site-packages] -p /usr/bin/python3 awesome_venv
-    (awesome_venv)$ pip install dependency1 dependency2 ...
-    (awesome_venv)$ pip install [-e] .
-
-    # pipenv
-    $ pipenv install
-    # then either
-    $ pipenv shell
-    (project-08xy15foo)$ pip install .
-    # or
-    $ pipenv run pip install .
+# pipenv
+$ pipenv install
+# then either
+$ pipenv shell
+(project-08xy15foo)$ pip install .
+# or
+$ pipenv run pip install .
+```
 
 pipenv
 ------
 
-Note that ``pipenv`` installs venvs by default to ``~/.virtualenvs`` (e.g.
-``~/.virtualenvs/project-08xy15foo``, where ``08xy15foo`` is the hash of
-``/path/to/project``, of course). Since ``virtualenvwrapper`` uses the same
-dir, you can remove venvs with ``rmvirtualenv`` as well. Too keep things
-interesting, the command for leaving ``pipenv``'s venv is ``exit``
-instead of ``deactivate``. While the latter also works, it may leave funny env
-vars such as ``PIPENV_ACTIVE`` behind.
+Note that `pipenv` installs venvs by default to `~/.virtualenvs` (e.g.
+`~/.virtualenvs/project-08xy15foo`, where `08xy15foo` is the hash of
+`/path/to/project`). Since `virtualenvwrapper` uses the same dir, you can
+remove venvs with `rmvirtualenv` as well. However, the command for leaving
+`pipenv`'s venv is `exit` instead of `deactivate`. While the latter also works,
+it may leave env vars such as `PIPENV_ACTIVE` behind.
 
 Usage
 =====
 
-Adapt ``$version`` in the script to your Python version. The script will install
-and uninstall the package using various methods and show where files are copied
-to. No ``sudo`` is used, so everything is happening in ``$HOME``.
+Adapt `$version` in `installtest.sh` to your Python version. The script will
+install and uninstall the package using various methods and show where files
+are copied to. No `sudo` is used, so everything is happening in `$HOME`.
 
-The script writes a log file ``installtest.log`` with detailed command output.
+The script writes a log file `installtest.log` with detailed command
+output.
 
-We assume that we have a naming scheme for the package "samplepkg" according to
-the `pypa sampleproject  <https://github.com/pypa/sampleproject>`_
-
-::
+We assume that we have a naming scheme for the package "samplepkg"
+according to the [pypa sampleproject][sampleproject]
 
     /path/to/samplepkg
     /path/to/samplepkg/setup.py
     /path/to/samplepkg/src/samplepkg/__init__.py
     /path/to/samplepkg/src/samplepkg/foo.py
 
-If not, then change ``$pkgname`` in the script.
+If not, then change `$pkgname` in the script.
 
-You can also use ``installtest.sh`` on other projects.
+You can also use `installtest.sh` on other projects.
 
-.. code-block:: sh
+```sh
+$ cd /path/to/myproject
+$ /path/to/samplepkg/installtest.sh
+```
 
-    $ cd /path/to/myproject
-    $ /path/to/samplepkg/installtest.sh
-
-Results from a run of ``installtest.sh``, started from
-``/home/elcorto/soft/git/samplepkg/``::
-
+Results from a run of `installtest.sh`, started from
+`/home/elcorto/soft/git/samplepkg/`:
 
     pip3 install .
                                                                 which pip3 : /usr/bin/pip3
@@ -193,41 +203,42 @@ Upload a package to pypi
 
 See
 
-* https://packaging.python.org/tutorials/packaging-projects/
-* https://packaging.python.org/guides/using-testpypi/
-
+* <https://packaging.python.org/tutorials/packaging-projects/>
+* <https://packaging.python.org/guides/using-testpypi/>
 
 Install pypa's upload tool. On Debian-ish systems:
 
-.. code-block:: sh
-
-    $ sudo apt install twine
+```sh
+$ sudo apt install twine
+```
 
 Build
 
-.. code-block:: sh
-
-    $ rm -rf build dist *.egg-info
-    $ python3 setup.py sdist bdist_wheel
+```sh
+$ rm -rf build dist *.egg-info
+$ python3 setup.py sdist bdist_wheel
+```
 
 Test
 
-.. code-block:: sh
+```sh
+$ twine upload --repository testpypi dist/*
 
-    $ twine upload --repository testpypi dist/*
+$ mkvirtualenv foo
 
-    $ mkvirtualenv foo
+# this fails
+(foo) $ pip search --index https://test.pypi.org/simple mypackage
 
-    # this fails
-    (foo) $ pip search --index https://test.pypi.org/simple mypackage
-
-    # this works
-    (foo) $ pip install --index-url https://test.pypi.org/simple [--no-deps] mypackage
-    (foo) $ deactivate
-    $ rmvirtualenv foo
+# this works
+(foo) $ pip install --index-url https://test.pypi.org/simple [--no-deps] mypackage
+(foo) $ deactivate
+$ rmvirtualenv foo
+```
 
 Real upload
 
-.. code-block:: sh
+```sh
+$ twine upload dist/*
+```
 
-    $ twine upload dist/*
+[sampleproject]: https://github.com/pypa/sampleproject
