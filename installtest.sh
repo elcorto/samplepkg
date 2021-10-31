@@ -15,7 +15,7 @@ pkgname=$(basename $(ls $here/src))
 log=installtest.log
 
 # Adapt to your system.
-version=python3.7
+version=python3.9
 venv=__test_venv__
 user_prefix=$HOME/soft
 user_venv=$HOME/$venv/
