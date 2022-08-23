@@ -50,12 +50,15 @@ pkg_rex="dummy.+test|$pkgname"
 
 
 uninstall(){
+    local fn
     echo "uninstall" >> $log
     # pip search -> dummy_test, but after install: pip list ->
     # dummy-test .. WTF!? This is NOT helpful.
     for name in $pkgname dummy_test dummy-test; do
         pip3 uninstall -y $name >> $log 2>&1
-        sed -i "/$name/d" $user_easy_install_pth $local_easy_install_pth
+        for fn in $user_easy_install_pth $local_easy_install_pth; do
+            [ -f $fn ] && sed -i "/$name/d" $fn
+        done
         rm -rfv $user_site_pkg/$name* $local_site_pkg/$name* >> $log 2>&1
     done
     rm -rfv $user_venv >> $log 2>&1
