@@ -215,7 +215,7 @@ $ sudo apt install twine
 Build
 
 ```sh
-$ rm -rf build dist *.egg-info
+$ rm -rf build dist $(find . -name "*.egg-info")
 $ python3 setup.py sdist bdist_wheel
 ```
 
@@ -226,10 +226,10 @@ $ twine upload --repository testpypi dist/*
 
 $ mkvirtualenv foo
 
-# this fails
+# this may fail
 (foo) $ pip search --index https://test.pypi.org/simple mypackage
 
-# this works
+# this usually works
 (foo) $ pip install --index-url https://test.pypi.org/simple [--no-deps] mypackage
 (foo) $ deactivate
 $ rmvirtualenv foo
