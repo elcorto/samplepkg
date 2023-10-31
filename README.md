@@ -206,17 +206,40 @@ See
 * <https://packaging.python.org/tutorials/packaging-projects/>
 * <https://packaging.python.org/guides/using-testpypi/>
 
-Install pypa's upload tool. On Debian-ish systems:
+Install pypa's upload tool `twine`.
 
 ```sh
+# Debian-ish system
 $ sudo apt install twine
+# Any system
+$ pip install twine
+```
+
+Build package data for upload to pypi.
+
+With `setup.py`:
+
+```sh
+$ rm -rf build dist $(find . -name "*.egg-info")
+$ python3 setup.py sdist bdist_wheel
+```
+
+With `pyproject.toml`:
+
+Install the `build` tool first.
+
+```sh
+# Debian-ish system
+$ sudo apt install python3-build
+# Any system
+$ pip install build
 ```
 
 Build
 
 ```sh
-$ rm -rf build dist $(find . -name "*.egg-info")
-$ python3 setup.py sdist bdist_wheel
+$ rm -rf dist
+$ python3 -m build
 ```
 
 Test
