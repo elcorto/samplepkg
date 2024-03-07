@@ -264,4 +264,10 @@ Real upload
 $ twine upload dist/*
 ```
 
+or use this when using a pypi API token:
+
+```sh
+$ TWINE_USERNAME=__token__ TWINE_PASSWORD=pypi-xxxsupersecretyyy twine upload dist/*
+```
+
 [sampleproject]: https://github.com/pypa/sampleproject
