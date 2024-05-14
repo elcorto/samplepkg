@@ -270,4 +270,18 @@ or use this when using a pypi API token:
 $ TWINE_USERNAME=__token__ TWINE_PASSWORD=pypi-xxxsupersecretyyy twine upload dist/*
 ```
 
+If you use https://www.passwordstore.org/, e.g.
+
+```sh
+$ pass pypi/api-token
+pypi-xxxsupersecretyyy
+__token__
+```
+
+then the above command reads
+
+```sh
+$ TWINE_USERNAME=__token__ TWINE_PASSWORD=$(pass pypi/api-token | head -n1) twine upload dist/*
+```
+
 [sampleproject]: https://github.com/pypa/sampleproject
